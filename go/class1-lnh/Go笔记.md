@@ -433,3 +433,89 @@ func main() {
 }
 ````
 
+### if
+
+````go
+package main
+
+import "fmt"
+
+func main() {
+	// age := 19
+
+	// if条件判断
+	/*	if age >= 18 {
+			fmt.Println("澳门皇冠线上赌场开业啦！")
+		} else {
+			fmt.Println("快写暑假作业吧！")
+		}
+	*/
+
+	// 多个判断条件
+	/*	if age >= 35 {
+			fmt.Println("赶紧去上班吧")
+		} else if age >= 18 {
+			fmt.Println("赶紧毕业吧！")
+		} else {
+			fmt.Println("快写暑假作业！")
+		}
+	*/
+
+	// 作用域
+	// age变量此时只在if条件判断语句中生效
+	if age := 19; age > 18 {
+		fmt.Println("你已经成年啦！")
+	} else {
+		fmt.Println("快写暑假作业吧！")
+	}
+	age := 114514
+	fmt.Println(age) //114514
+
+}
+````
+
+### for循环
+
+````go
+package main
+
+import (
+	"fmt"
+)
+
+// for循环
+func main() {
+	// 基本格式
+	for i := 0; i < 10; i++ {
+		fmt.Println(i)
+	}
+
+	// 变种1
+	/* var i = 5
+	for ; i < 10; i++ {
+		fmt.Println(i)
+	}
+	fmt.Println(i) //10
+	*/
+
+	// 变种2
+	var i = 5
+	for i < 10 {
+		fmt.Println(i)
+		i++
+	}
+
+	// 无限循环
+	// for {
+	// 	fmt.Println("123")
+	// }
+
+	// for range循环
+	s := "Hello老钱"
+	for i, v := range s {
+		fmt.Printf("%d,%c\n", i, v)
+	}
+
+}
+````
+
