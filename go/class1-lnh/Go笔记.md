@@ -537,3 +537,697 @@ func main() {
 }
 ````
 
+
+
+## 函数
+
+### 常规
+
+````go
+package main
+
+import "fmt"
+
+// 函数:一段代码的封装
+
+func f1() {
+	fmt.Println("Hello 沙河！")
+}
+
+func f2(name string) {
+	fmt.Println("Hello", name)
+}
+
+// 带参数和返回值的函数
+func f3(x int, y int) int {
+	sum := x + y
+	return sum
+}
+
+// 参数类型简写
+func f4(x, y int) int {
+	return x + y
+}
+
+// 可变参数
+func f5(title string, y ...int) int {
+	fmt.Println(y) // y是一个int类型的切片
+	return 1
+}
+
+// 命名返回值
+func f6(x, y int) (sum int) {
+	sum = x + y // 如果使用命名的返回值，那么在函数中可以直接使用返回值变量
+	return      // 如果使用命名的返回值,return后面可以省略返回值变量
+}
+
+// Go语言中支持多个返回值
+func f7(x, y int) (sum int, sub int) {
+	sum = x + y
+	sub = x - y
+	return
+}
+
+
+func main() {
+	f1()
+	f2("理想")
+	f2("姬无命")
+	fmt.Println(f3(100, 200)) // 调用函数
+
+	ret := f3(100, 200)
+	fmt.Println(ret)
+
+	f5("lixiang", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+	// 在一个命名的函数中不能够再声明命名函数
+	// func f8(){
+
+	// }
+
+
+}
+````
+
+#### day 3 homework
+
+````go
+package main
+
+import "fmt"
+
+/*
+你有50枚金币，需要分配给以下几个人：Matthew,Sarah,Augustus,Heidi,Emilie,Peter,Giana,Adriano,Aaron,Elizabeth。
+分配规则如下：
+a. 名字中每包含1个'e'或'E'分1枚金币
+b. 名字中每包含1个'i'或'I'分2枚金币
+c. 名字中每包含1个'o'或'O'分3枚金币
+d: 名字中每包含1个'u'或'U'分4枚金币
+
+写一个程序，计算每个用户分到多少金币，以及最后剩余多少金币？
+程序结构如下，请实现 ‘dispatchCoin’ 函数
+*/
+var (
+	coins = 50
+	users = []string{
+		"Matthew", "Sarah", "Augustus", "Heidi", "Emilie", "Peter", "Giana", "Adriano", "Aaron", "Elizabeth",
+	}
+	distribution = make(map[string]int, len(users))
+)
+
+func dispatchCoin() (left int) {
+	// 1. 依次拿到每个人的名字
+	for _, name := range users {
+		//distribution[name] = 0
+		for _, c := range name {
+			switch c {
+			case 'e', 'E':
+				distribution[name]++
+				coins--
+			case 'i', 'I':
+				distribution[name] += 2
+				coins -= 2
+			case 'o', 'O':
+				distribution[name] += 3
+				coins -= 3
+			case 'u', 'U':
+				distribution[name] += 4
+				coins -= 4
+			}
+		}
+
+	}
+	left = coins
+	return
+
+	// 2. 拿到一个人名根据分金币的规则去分金币,
+	// 2.1 每个人分的金币数应该保存到 distribution 中
+	// 2.2 还要记录下剩余的金币数
+	// 3. 整个第2步执行完就能得到最终每个人分的金币数和剩余金币数
+	//return
+}
+func main() {
+	//left := dispatchCoin()
+	//fmt.Println("剩下：", left)
+	left := dispatchCoin()
+	for k, v := range distribution {
+		fmt.Printf("%s,%d\n", k, v)
+	}
+	fmt.Println("剩下", left)
+}
+````
+
+
+
+### 内置函数
+
+|    内置函数    |                             介绍                             |
+| :------------: | :----------------------------------------------------------: |
+|     close      |                     主要用来关闭channel                      |
+|      len       |      用来求长度，比如string、array、slice、map、channel      |
+|      new       | 用来分配内存，主要用来分配值类型，比如int、struct。返回的是指针 |
+|      make      |   用来分配内存，主要用来分配引用类型，比如chan、map、slice   |
+|     append     |                 用来追加元素到数组、slice中                  |
+| panic和recover |                        用来做错误处理                        |
+
+### 作用域
+
+#### 局部/全局 变量作用域
+
+````go
+package main
+
+import "fmt"
+
+// 变量的作用域
+var x = 100 // 定义一个全局变量
+
+// 定义一个函数
+func f1() {
+	//x = 114514
+	name := "qjh"
+	// 函数中查找变量的顺序
+	// 1. 先在函数内部查找
+	// 2. 找不到就往函数的外面查找,一直找到全局
+	fmt.Println(x, name)
+}
+func main() {
+	f1()
+    // fmt.Println(name) // 函数内部定义的变脸只能在该函数内部使用
+}
+
+````
+
+#### 语句块作用域
+
+````go
+package main
+
+import "fmt"
+
+
+func main() {
+	// 语句块作用域
+	if i := 10; i < 18 {
+		fmt.Println("乖乖上学")
+	}
+	// fmt.Println(i) // 不存在i
+	for j := 0; j < 5; j++ {
+		fmt.Println(j)
+	}
+	// fmt.Println(j) // 不存在j
+}
+````
+
+### 函数类型
+
+````go
+package main
+
+import "fmt"
+
+func f1() {
+	fmt.Println("Hello 沙河！")
+}
+
+func f2() int {
+	return 10
+}
+
+func f4(x, y int) int {
+	return x + y
+}
+
+// 函数也可以作为参数的类型
+func f3(x func() int) {
+	ret := x()
+	fmt.Println(ret)
+}
+func ff(a, b int) int {
+	return a + b
+}
+
+// 函数还可以作为返回值
+func f5(x func() int) func(int, int) int {
+	return ff
+}
+func main() {
+	a := f1
+	fmt.Printf("%T\n", a) //func()
+	b := f2
+	fmt.Printf("%T\n", b)  //func() int
+	f3(f2)                 //10
+	f3(b)                  //10
+	fmt.Printf("%T\n", f5) //func(func() int) func(int, int) int
+	f7 := f5(f2)
+	// f3(f4)
+	fmt.Printf("%T", f7) //func(int, int) int
+
+}
+````
+
+
+
+### 匿名函数
+
+````go
+package main
+
+import "fmt"
+
+// 匿名函数
+/*var f1 = func(x, y int) {
+	fmt.Println(x + y)
+
+}*/
+
+func main() {
+	// 函数内部没有办法声明带名字的函数
+	// 匿名函数
+	f1 := func(x, y int) {
+		fmt.Println(x + y)
+	}
+	f1(100, 200) //300
+
+	// 如果只是调用一次的函数，还可以简写成立即执行函数
+	func(x, y int) {
+		fmt.Println(x + y)
+		fmt.Println("Hello world!")
+	}(100, 200)
+	//3000
+	//Hello world!
+}
+
+````
+
+### 高阶函数
+
+函数也是一种类型，它可以作为参数，也可以作为返回值。
+
+```go
+// 函数也可以作为参数的类型
+func f3(x func() int) {
+	ret := x()
+	fmt.Println(ret)
+}
+
+func ff(a, b int) int {
+	return a + b
+}
+
+// 函数还可以作为返回值
+func f5(x func() int) func(int, int) int {
+	return ff
+}
+```
+
+### 闭包
+
+````go
+package main
+
+import "fmt"
+
+func f1(f func()) {
+	fmt.Println("this is f1")
+	f()
+}
+
+func f2(x, y int) {
+	fmt.Println("this is f2")
+	fmt.Println(x + y)
+}
+
+// 要求：
+// f1(f2)
+func f3(f func(int, int), x, y int) func() {
+	tmp := func() {
+		f(x, y)
+	}
+	return tmp
+}
+
+func main() {
+	ret := f3(f2, 100, 200) // 把原来需要传递两个int类型的参数包装成一个不需要传参的函数
+	fmt.Printf("%T\n", ret)
+	// ret()
+	f1(ret)
+}
+
+//func()
+//this is f1
+//this is f2
+//300
+````
+
+````go
+package main
+
+import "fmt"
+
+// 闭包是什么？
+// 闭包是一个函数，这个函数包含了他外部作用域的一个变量
+
+// 底层的原理：
+// 1. 函数可以作为返回值
+// 2. 函数内部查找变量的顺序，先在自己内部找，找不到往外层找
+
+func adder1() func(int) int {
+	x := 100
+	return func(y int) int {
+		x += y
+		return x
+	}
+}
+func adder(x int) func(int) int {
+	return func(y int) int {
+		x += y
+		return x
+
+	}
+}
+
+func main() {
+	ret := adder(100)
+	fmt.Println(ret(200)) //300
+	fmt.Println(ret(300)) //600
+	ret2 := ret(100)
+	fmt.Println(ret2) //700
+
+	f1 := adder(10)
+	fmt.Println(f1(20)) //30
+}
+````
+
+````go
+package main
+
+import "fmt"
+
+func calc(base int) (func(int) int, func(int) int) {
+	a := func(i int) int {
+		base += i
+		return base
+	}
+	b := func(i int) int {
+		base -= i
+		return base
+	}
+	return a, b
+}
+func main() {
+	f1, f2 := calc(10)
+	fmt.Println(f1(1), f2(2)) //11 9
+	fmt.Println(f1(3), f2(4)) //12 8
+	fmt.Println(f1(5), f2(6)) //13 7
+
+}
+````
+
+#### 添加后缀示例
+
+````go
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+/*
+	func main() {
+		var string = "操你妈"
+		if strings.HasSuffix(string, "逼") {
+			fmt.Println("有逼")
+		} else {
+			fmt.Println("没逼")
+		}
+	}
+*/
+// 闭包
+func makeSuffixFunc(suffix string) func(string) string {
+	return func(name string) string {
+		if !strings.HasSuffix(name, suffix) {
+			return name + suffix
+		} else {
+			return name
+		}
+	}
+}
+func main() {
+	jpgFunc := makeSuffixFunc(".jpg")
+	txtFunc := makeSuffixFunc(".txt")
+	fmt.Println(jpgFunc("你好"))
+	fmt.Println(jpgFunc("不好"))
+	fmt.Println(jpgFunc("正常的.jpg"))
+	fmt.Println(txtFunc("Maybach"))
+	fmt.Println(txtFunc("Benz"))
+}
+
+/*
+你好.jpg
+不好.jpg
+正常的.jpg
+Maybach.txt
+Benz.txt
+*/
+````
+
+### defer
+
+**💡 快速判断技巧**
+
+遇到这类题时，问自己：
+
+1. **返回值是否命名**？
+   - 是 → defer 可直接修改返回值
+   - 否 → 看 defer 是否通过闭包捕获了返回值（匿名返回值无法被直接捕获）
+2. **defer 是否有参数**？
+   - 有参数 → 操作的是副本，不影响外部
+   - 无参数 → 闭包可能"偷家"改原件
+
+**🚀 终极口诀**
+
+> "**return 先赋值，defer 后捣乱，
+> 闭包逮到就能改，传参只能玩副本**​"
+
+#### defer 基础顺序流程
+
+defer延迟调用，会把defer后面的语句延迟调用
+
+把当时的状态都保存
+
+defer多用于释放资源
+
+多个defer存在时，按照先进后出的方式去执行。
+
+````go
+package main
+
+import "fmt"
+
+func deferDemo() {
+	fmt.Println("start")
+	defer fmt.Println("嘿嘿嘿")
+	defer fmt.Println("好好好")
+	defer fmt.Println("哟西")
+	defer fmt.Println("end")
+}
+func main() {
+	deferDemo()
+}
+
+start
+end
+哟西
+好好好
+嘿嘿嘿
+````
+
+
+
+#### defer结合匿名函数
+
+````go
+package main
+
+import "fmt"
+
+// Go语言中函数的return不是原子操作，在底层是分为两步来执行
+// 第一步：返回值赋值
+// defer
+// 第二步：真正的RET返回
+// 函数中如果存在defer，那么defer执行的时机是在第一步和第二步之间
+func f1() int {
+	x := 5
+	defer func() {
+		x++ // 修改的是x不是返回值
+	}()
+	return x // 1. 返回值赋值 2. defer 3. 真正的RET指令
+}
+
+func f2() (x int) {
+	defer func() {
+		x++
+	}()
+	return 5 // 返回值=x
+
+}
+
+func f3() (y int) {
+	x := 5
+	defer func() {
+		x++ // 修改的是x
+	}()
+	return x // 1. 返回值 = y = x = 5 2. defer修改的是x 3. 真正的返回
+}
+
+func f4() (x int) {
+	defer func(x int) {
+		x++ // 改变的是函数中x的副本
+	}(x)
+	return 5 // 返回值 = x = 5
+}
+
+func f5() (result int) {
+	x := 5
+	defer func() {
+		x++
+	}()
+	result = x
+	return // 返回result
+}
+
+func main() {
+	fmt.Println(f1()) //5
+	fmt.Println(f2()) //6
+	fmt.Println(f3()) //5
+	fmt.Println(f4()) //5
+	fmt.Println(f5()) //5
+
+}
+````
+
+#### defer会立即执行参数求值
+
+````go
+package main
+
+import "fmt"
+
+// defer
+
+func calc(index string, a, b int) int {
+	ret := a + b
+	fmt.Println(index, a, b, ret)
+	return ret
+}
+
+func main() {
+	a := 1
+	b := 2
+	defer calc("1", a, calc("10", a, b)) //参数立即求值​
+	a = 0
+	defer calc("2", a, calc("20", a, b))
+	b = 1
+}
+
+// 1. a:=1
+// 2. b:=2
+// 3. defer calc("1", 1, calc("10", 1, 2))
+// 4. calc("10", 1, 2) // "10" 1 2 3
+// 5. defer calc("1", 1, 3)
+// 6. a = 0
+// 7. defer calc("2", 0, calc("20", 0, 2))
+// 8. calc("20", 0, 2) // "20" 0 2 2
+// 9. defer calc("2", 0, 2)
+// 10. b = 1
+// calc("2", 0, 2) // "2" 0 2 2
+// calc("1", 1, 3) // "1" 1 3 4
+
+// 最终的答案：
+// "10" 1 2 3
+// "20" 0 2 2
+//  "2" 0 2 2
+// "1" 0 3 3
+````
+
+### panic和recover
+
+用于Go的抛出错误与异常处理
+
+使用`panic/recover`模式来处理错误。 `panic`可以在任何地方引发，但`recover`只有在`defer`调用的函数中有效。 首先来看一个例子：
+
+1. `recover()`必须搭配`defer`使用。
+2. `defer`一定要在可能引发`panic`的语句之前定义。
+
+````go
+package main
+
+import "fmt"
+
+func A() {
+	fmt.Println("Plan A")
+}
+func B() {
+	panic("出现致命错误！")
+}
+func C() {
+	fmt.Println("Plan C")
+}
+func main() {
+	A()
+	B()
+	C()
+}
+
+/*
+Plan A
+panic: 出现致命错误！
+
+goroutine 1 [running]:
+main.B(...)
+        C:/Users/qjh/Desktop/运维/go/mylearning/mylearning/go/class1-lnh/src/qjh.test.com/studygo/day3/14panic_recover/main.go:9
+main.main()
+        C:/Users/qjh/Desktop/运维/go/mylearning/mylearning/go/class1-lnh/src/qjh.test.com/studygo/day3/14panic_recover/main.go:16 +0x5b
+exit status 2
+*/
+````
+
+使用recovery挽救
+
+````go
+package main
+
+import (
+	"fmt"
+)
+
+func A() {
+	fmt.Println("Plan A")
+}
+func B() {
+	defer func() {
+		err := recover()
+		fmt.Println(err)
+		if err != nil {
+			fmt.Println("已恢复PlanB")
+		}
+	}()
+	panic("出现致命错误！")
+}
+func C() {
+	fmt.Println("Plan C")
+}
+func main() {
+	A()
+	B()
+	C()
+}
+/*
+Plan A
+出现致命错误！
+已恢复PlanB
+Plan C
+*/
+````
+
